@@ -1,0 +1,287 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+
+html, body, div, form, fieldset, legend, label {
+    margin: 0;
+    padding: 0;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height:100%;
+}
+.start-screen, .game-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.header {
+    background-color: beige;
+    width: 100%;
+    text-align: center;
+    background-color: black;
+    color: white;
+    font-family: "Josefin Sans", sans-serif;
+}
+.player-info {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    width: 100%;
+    height:100%;
+    align-items: center;
+}
+.player-display {
+    font-size: 20px;
+    padding: 10px;
+}
+.activeGura {
+    font-size: 3.4rem;
+    font-weight: bold;
+    color: #2F77A5;
+    text-shadow: 0 0px black, 0 0 5px black;
+}
+.activeCali {
+    font-size: 3.4rem;
+    font-weight: bold;
+    color: #F7C2E6;
+    text-shadow: 0 0px black, 0 0 20px black;
+}
+.gameContainer {
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    position: relative;
+    height:100%;
+}
+.gameGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 200px);
+    grid-template-rows: repeat(3, 200px);
+    justify-content: center;
+    background-color: white;
+}
+.cell {
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+}
+img{
+    max-width:100%;
+}
+.start-screen {
+    font-family: "Josefin Sans", sans-serif;
+    margin: 0;
+}
+.player1Side, .player2Side {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+}
+.playerInputContainer {
+    display: grid;
+    grid-template-columns: 2fr 2fr;
+    width: 100%;
+    align-items: center;
+    height: 80%;
+}
+.playerContainer {
+    width: 100%;
+    height: 91.8vh;
+    position: relative;
+    background: linear-gradient(
+        to right,
+        #2F77A5 0%,
+        #7290BB 50%,
+        #B4A9D0 50%,
+        #F7C2E6 100%
+    );
+}
+.player1Name, .player2Name {
+    font-weight: 600;
+}
+input {
+    max-width: 20%;
+    padding: 2%;
+    align-self: center;
+}
+.characterImage {
+    max-width: 30%;
+    height: auto;
+}
+label {
+    font-size: 1.6rem;
+    margin-top: 2%;
+}
+button {
+    border-radius: 20%;
+    padding: 20px;
+    font-family: "Josefin Sans", sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-top: 20%;
+}
+.startButton {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.controlButtons {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.popup {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+}
+
+.popup-content {
+    padding: 20px;
+    width:100%;
+    height:100%;
+    max-width: 600px;
+    text-align: center;
+    font-size: 2.4rem;
+    align-content: center;
+    color:white;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+@media only screen and (max-height: 600px) {
+    .characterImageTitle {
+        max-width: 90%;
+    }
+}
+
+
+@media only screen and (max-height: 900px) {
+    .characterImageTitle {
+        max-width: 60%;
+    }
+    .gameGrid {
+        grid-template-columns: repeat(3, 100px);
+        grid-template-rows: repeat(3, 100px);
+        justify-content: center;
+    }
+    .controlButtons{
+        top:80%;
+    }
+}
+
+@media only screen and (max-height: 600px) {
+
+    .controlButtons{
+        display:flex;
+        align-items:center;
+        gap:400px;
+        top:60%;
+    }
+    .player-display{
+        font-size: 1.6rem;
+    }
+
+}
+@media only screen and (max-width:1000px)
+{
+    .characterImageTitle{
+        max-width:70%;
+    }
+}
+@media only screen and (max-width: 600px) {
+    .characterImage {
+        max-width: 20%;
+    }
+    .controlButtons {
+        display: flex;
+        gap:180px;
+    }
+    .gameGrid {
+        grid-template-columns: repeat(3, 50px);
+        grid-template-rows: repeat(3, 50px);
+    }
+    .gameContainer {
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        margin:0;
+    }
+    .playerContainer {
+        background: linear-gradient(
+            to bottom,
+            #2F77A5 0%,
+            #7290BB 50%,
+            #B4A9D0 50%,
+            #F7C2E6 100%
+        );
+    }
+    .activeGura {
+        font-size: 1.8rem;
+    }
+    .activeCali {
+        font-size: 2rem;
+    }
+    .characterImageTitle {
+        max-width: 30%;
+    }
+    .playerInputContainer {
+        display: grid;
+        grid-template-rows: 50% 50%;
+        grid-template-columns: 100%;
+        position: relative;
+        height: 100%;
+    }
+    .player2Side {
+        grid-row: 2;
+    }
+    .startButton {
+        position: absolute;
+        top: 61.5%;
+        transform: translate(-50%, -50%);
+    }
+    button{
+        padding:5px;
+        padding-left: 20px;
+        padding-right:20px;
+    }
+   
+}
+
+
+@media only screen and (max-width: 540px), screen and (max-height: 700px) {
+    .characterImageTitle {
+        max-width: 25%;
+        
+    }
+    .gameGrid {
+        grid-template-columns: repeat(3, 100px);
+        grid-template-rows: repeat(3, 100px);
+    }
+}
