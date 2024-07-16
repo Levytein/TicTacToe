@@ -10,13 +10,13 @@ body,html{
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
+    height:100%;
 }
 
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100%;
     overflow-y:auto;
 }
 .start-screen, .game-screen {
@@ -25,8 +25,7 @@ body,html{
     align-items: center;
     width: 100%;
     position: relative; /* Ensure the elements are positioned correctly */
-    overflow-y: auto; /* Prevent overflow issues */
-    touch-action: none; /* Prevent default touch behaviors */
+    overflow-y: auto; 
     flex:1;
 }
 .header {
