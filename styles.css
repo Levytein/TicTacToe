@@ -24,7 +24,7 @@ body,html{
     align-items: center;
     width: 100%;
     position: relative; /* Ensure the elements are positioned correctly */
-    overflow: hidden; /* Prevent overflow issues */
+    overflow-y: auto; /* Prevent overflow issues */
     touch-action: none; /* Prevent default touch behaviors */
 }
 .header {
