@@ -284,4 +284,13 @@ const DisplayController = (() => {
 
 document.addEventListener("DOMContentLoaded", () => {
     DisplayController.renderBoard();
+
+
+    const audioElement = document.getElementById('background-audio');
+    const playAudio = () => {
+        audioElement.play();
+        document.removeEventListener('click', playAudio);
+    };
+    document.addEventListener('click', playAudio);
+    
 });
