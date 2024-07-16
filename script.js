@@ -27,6 +27,7 @@ const Game = (() => {
     let player2;
     let currentPlayer;
     let isGameOver = false;
+    let isAiGame = false;
 
     const winningPatterns = [
         [0, 1, 2],
@@ -40,6 +41,7 @@ const Game = (() => {
     ];
 
     const startGame = (playerOneName, playerTwoName, isAI = false) => {
+        isAiGame = isAI;
         player1 = Player(playerOneName, 'X');
         player2 = Player(playerTwoName, 'O', isAI);
         currentPlayer = player1;
@@ -76,8 +78,11 @@ const Game = (() => {
         if (Gameboard.setCell(index, currentPlayer.symbol)) {
             if (checkWin(Gameboard.getBoard(), currentPlayer.symbol)) {
                 DisplayController.showPopup(`${currentPlayer.name} wins!`);
-                isGameOver = true;
-                return;
+                setTimeout(() => {
+                    isGameOver = true;
+                    return;
+                }, 100);
+               
             }
 
             if (checkTie(Gameboard.getBoard())) {
@@ -95,19 +100,20 @@ const Game = (() => {
         const bestMove = minimax(Gameboard.getBoard(), player2.symbol).index;
         setTimeout(() => {
             makeMove(bestMove);
-            DisplayController.renderBoard(); // Ensure the board updates after AI move
-        }, 500); // Delay for natural feel
+            DisplayController.renderBoard();
+        }, 500);
     };
 
     const getCurrentPlayer = () => currentPlayer;
     const getPlayer1 = () => player1;
+    const getIsAiGame = () => isAiGame;
 
-    return { startGame, makeMove, getCurrentPlayer, getPlayer1, checkWin };
+    return { startGame, makeMove, getCurrentPlayer, getPlayer1, getIsAiGame, checkWin };
 })();
 
 const minimax = (newBoard, player) => {
     const humanPlayer = Game.getPlayer1().symbol;
-    const aiPlayer = Game.getPlayer1().symbol === 'X' ? 'O' : 'X';  // Get AI symbol based on player1 symbol
+    const aiPlayer = Game.getPlayer1().symbol === 'X' ? 'O' : 'X';
 
     const availableSpots = newBoard.reduce((acc, cell, index) => cell === null ? acc.concat(index) : acc, []);
 
@@ -170,7 +176,6 @@ const DisplayController = (() => {
     const caliImg = document.getElementById("caliImg");
     const popup = document.getElementById("popup");
     const popupMessage = document.getElementById("popupMessage");
-    const popupResetButton = document.getElementById("popupResetButton");
     const popupBackToTitleButton = document.getElementById("popupBackToTitleButton");
     const closePopup = document.getElementById("closePopup");
 
@@ -179,10 +184,8 @@ const DisplayController = (() => {
         Gameboard.getBoard().forEach((cell, index) => {
             const cellElement = document.createElement('div');
             cellElement.classList.add('cell');
-            // Clear any previous content
             cellElement.innerHTML = '';
 
-            // Add image based on the symbol
             if (cell === 'X') {
                 cellElement.insertAdjacentHTML('beforeend', `<img src='guraspin.gif' alt='X'>`);
             } else if (cell === 'O') {
@@ -239,13 +242,22 @@ const DisplayController = (() => {
     };
 
     const resetGame = () => {
-        document.getElementById("player1Name").value = '';
-        document.getElementById("player2Name").value = '';
         startScreen.style.display = 'flex';
         gameScreen.style.display = 'none';
         Gameboard.resetBoard();
-    };
 
+        if (Game.getIsAiGame()) {
+            startAiGame();
+        } else {
+            startGame();
+        }
+    };
+    const backToTitle = () =>
+    {
+        startScreen.style.display = 'flex';
+        gameScreen.style.display = 'none';
+        Gameboard.resetBoard();
+    }
     const showPopup = (message) => {
         popupMessage.textContent = message;
         popup.style.display = "flex";
@@ -255,27 +267,21 @@ const DisplayController = (() => {
         popup.style.display = "none";
     };
 
-    /*popupResetButton.addEventListener("click", () => {
-        hidePopup();
-        startGame();
-    });
-    */
     popupBackToTitleButton.addEventListener("click", () => {
         hidePopup();
-        resetGame();
+        backToTitle();
     });
 
     closePopup.addEventListener("click", hidePopup);
 
     document.getElementById("startButton").addEventListener("click", startGame);
-    document.getElementById("resetButton").addEventListener("click", startGame);
-    document.getElementById("backToTitle").addEventListener("click", resetGame);
+    document.getElementById("resetButton").addEventListener("click", resetGame);
+    document.getElementById("backToTitle").addEventListener("click", backToTitle);
     document.getElementById("startAIButton").addEventListener("click", startAiGame);
 
     return { renderBoard, updatePlayerDisplay, showPopup };
 })();
 
-// Initial game setup
 document.addEventListener("DOMContentLoaded", () => {
     DisplayController.renderBoard();
 });
