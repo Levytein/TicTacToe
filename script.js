@@ -18,8 +18,8 @@ const Gameboard = (() => {
     return { getBoard, resetBoard, setCell };
 })();
 
-const Player = (name, symbol) => {
-    return { name, symbol };
+const Player = (name, symbol, isAI = false) => {
+    return { name, symbol, isAI };
 };
 
 const Game = (() => {
@@ -39,24 +39,30 @@ const Game = (() => {
         [2, 4, 6]
     ];
 
-    const startGame = (playerOneName, playerTwoName) => {
+    const startGame = (playerOneName, playerTwoName, isAI = false) => {
         player1 = Player(playerOneName, 'X');
-        player2 = Player(playerTwoName, 'O');
+        player2 = Player(playerTwoName, 'O', isAI);
         currentPlayer = player1;
         isGameOver = false;
         Gameboard.resetBoard();
         DisplayController.renderBoard();
         DisplayController.updatePlayerDisplay();
+        if (currentPlayer.isAI) {
+            makeAIMove();
+        }
     };
 
     const switchPlayer = () => {
         currentPlayer = (currentPlayer === player1) ? player2 : player1;
         DisplayController.updatePlayerDisplay();
+        if (currentPlayer.isAI) {
+            makeAIMove();
+        }
     };
 
-    const checkWin = (board) => {
+    const checkWin = (board, player) => {
         return winningPatterns.some(pattern =>
-            pattern.every(index => board[index] === currentPlayer.symbol)
+            pattern.every(index => board[index] === player)
         );
     };
 
@@ -68,7 +74,7 @@ const Game = (() => {
         if (isGameOver) return;
 
         if (Gameboard.setCell(index, currentPlayer.symbol)) {
-            if (checkWin(Gameboard.getBoard())) {
+            if (checkWin(Gameboard.getBoard(), currentPlayer.symbol)) {
                 DisplayController.showPopup(`${currentPlayer.name} wins!`);
                 isGameOver = true;
                 return;
@@ -85,11 +91,74 @@ const Game = (() => {
         }
     };
 
+    const makeAIMove = () => {
+        const bestMove = minimax(Gameboard.getBoard(), player2.symbol).index;
+        setTimeout(() => {
+            makeMove(bestMove);
+            DisplayController.renderBoard(); // Ensure the board updates after AI move
+        }, 500); // Delay for natural feel
+    };
+
     const getCurrentPlayer = () => currentPlayer;
     const getPlayer1 = () => player1;
 
-    return { startGame, makeMove, getCurrentPlayer, getPlayer1 };
+    return { startGame, makeMove, getCurrentPlayer, getPlayer1, checkWin };
 })();
+
+const minimax = (newBoard, player) => {
+    const humanPlayer = Game.getPlayer1().symbol;
+    const aiPlayer = Game.getPlayer1().symbol === 'X' ? 'O' : 'X';  // Get AI symbol based on player1 symbol
+
+    const availableSpots = newBoard.reduce((acc, cell, index) => cell === null ? acc.concat(index) : acc, []);
+
+    if (Game.checkWin(newBoard, humanPlayer)) {
+        return { score: -10 };
+    } else if (Game.checkWin(newBoard, aiPlayer)) {
+        return { score: 10 };
+    } else if (availableSpots.length === 0) {
+        return { score: 0 };
+    }
+
+    const moves = [];
+
+    for (let i = 0; i < availableSpots.length; i++) {
+        const move = {};
+        move.index = availableSpots[i];
+        newBoard[availableSpots[i]] = player;
+
+        if (player === aiPlayer) {
+            const result = minimax(newBoard, humanPlayer);
+            move.score = result.score;
+        } else {
+            const result = minimax(newBoard, aiPlayer);
+            move.score = result.score;
+        }
+
+        newBoard[availableSpots[i]] = null;
+        moves.push(move);
+    }
+
+    let bestMove;
+    if (player === aiPlayer) {
+        let bestScore = -Infinity;
+        for (let i = 0; i < moves.length; i++) {
+            if (moves[i].score > bestScore) {
+                bestScore = moves[i].score;
+                bestMove = i;
+            }
+        }
+    } else {
+        let bestScore = Infinity;
+        for (let i = 0; i < moves.length; i++) {
+            if (moves[i].score < bestScore) {
+                bestScore = moves[i].score;
+                bestMove = i;
+            }
+        }
+    }
+
+    return moves[bestMove];
+};
 
 const DisplayController = (() => {
     const gameGrid = document.getElementById("gameGrid");
@@ -110,18 +179,19 @@ const DisplayController = (() => {
         Gameboard.getBoard().forEach((cell, index) => {
             const cellElement = document.createElement('div');
             cellElement.classList.add('cell');
-             // Clear any previous content
-             cellElement.innerHTML = '';
+            // Clear any previous content
+            cellElement.innerHTML = '';
 
-             // Add image based on the symbol
-             if (cell === 'X') {
-                 cellElement.insertAdjacentHTML('beforeend', `<img src='morispin.gif' alt='X'>`);
-             } else if (cell === 'O') {
-                 cellElement.insertAdjacentHTML('beforeend', `<img src='guraspin.gif' alt='O'>`);
-             }
+            // Add image based on the symbol
+            if (cell === 'X') {
+                cellElement.insertAdjacentHTML('beforeend', `<img src='guraspin.gif' alt='X'>`);
+            } else if (cell === 'O') {
+                cellElement.insertAdjacentHTML('beforeend', `<img src='morispin.gif' alt='O'>`);
+            }
             cellElement.addEventListener('click', () => {
-                Game.makeMove(index);
-                renderBoard(); // Re-render the board after making a move
+                if (!Game.getCurrentPlayer().isAI) {
+                    Game.makeMove(index);
+                }
             });
             gameGrid.appendChild(cellElement);
         });
@@ -157,6 +227,17 @@ const DisplayController = (() => {
         Game.startGame(player1Name, player2Name);
     };
 
+    const startAiGame = () => {
+        const player1Name = document.getElementById("player1Name").value || "Player 1";
+
+        startScreen.style.display = 'none';
+        gameScreen.style.display = 'flex';
+
+        player1Display.textContent = player1Name;
+        player2Display.textContent = "AI";
+        Game.startGame(player1Name, "AI", true);
+    };
+
     const resetGame = () => {
         document.getElementById("player1Name").value = '';
         document.getElementById("player2Name").value = '';
@@ -174,11 +255,11 @@ const DisplayController = (() => {
         popup.style.display = "none";
     };
 
-    popupResetButton.addEventListener("click", () => {
+    /*popupResetButton.addEventListener("click", () => {
         hidePopup();
         startGame();
     });
-
+    */
     popupBackToTitleButton.addEventListener("click", () => {
         hidePopup();
         resetGame();
@@ -189,6 +270,7 @@ const DisplayController = (() => {
     document.getElementById("startButton").addEventListener("click", startGame);
     document.getElementById("resetButton").addEventListener("click", startGame);
     document.getElementById("backToTitle").addEventListener("click", resetGame);
+    document.getElementById("startAIButton").addEventListener("click", startAiGame);
 
     return { renderBoard, updatePlayerDisplay, showPopup };
 })();

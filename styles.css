@@ -127,10 +127,11 @@ button {
     margin-top: 20%;
 }
 .startButton {
+    
+    display:flex;
+    justify-content: center;
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    left:42.3%;
 }
 .controlButtons {
     position: absolute;
@@ -209,10 +210,53 @@ button {
     }
 
 }
+@media only screen and (max-width:1400px)
+{
+    .characterImageTitle{
+        max-width:70%;
+    }
+    .startButton {
+        position: absolute;
+        top: 70%;
+        left:50.5%;
+        transform: translate(-50%, -50%);
+    }
+}
+@media only screen and (max-width:1100px)
+{
+    .characterImageTitle{
+        max-width:70%;
+    }
+    .startButton {
+        position: absolute;
+        top: 70%;
+        left:51.9%;
+        transform: translate(-50%, -50%);
+    }
+    #startButton{
+        padding:10px;
+        font-size: 1.1rem;
+    }
+}
 @media only screen and (max-width:1000px)
 {
     .characterImageTitle{
         max-width:70%;
+    }
+    .startButton {
+        position: absolute;
+        top: 70%;
+        left:52%;
+        transform: translate(-50%, -50%);
+    }
+}
+@media only screen and (max-width:800px)
+{
+    .startButton {
+        position: absolute;
+        top: 70%;
+        left:52.8%;
+        transform: translate(-50%, -50%);
     }
 }
 @media only screen and (max-width: 600px) {
@@ -263,7 +307,8 @@ button {
     }
     .startButton {
         position: absolute;
-        top: 61.5%;
+        top: 47%;
+        left:50%;
         transform: translate(-50%, -50%);
     }
     button{
